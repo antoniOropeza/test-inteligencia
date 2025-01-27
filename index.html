@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de Inteligencia Emocional</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <style>
+    .logo {
+      max-width: 60px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      background-color: #006455;
+    }
+    .justificado {
+      text-align: justify;
+    }
+    .card-body {
+      padding: 2rem;
+    }
+    .container{
+        max-width: 800px;
+    }
+    .table thead th {
+  text-align: center;
+  vertical-align: middle;
+}
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #d1e7dd;
+    z-index: 2;
+  }
+
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow-sm">
+      <div class="card-header text-white text-center">
+        <img src="assets/img/imss2.png" alt="Logo IMSS" class="logo">
+        <h1 class="mb-0"><strong>Test de Inteligencia Emocional</strong></h1>
+      </div>
+      <div class="card-body">
+        <div class="mb-4 justificado">
+          <h5>
+            Las preguntas que encontrarás en este TEST se refieren a la manera habitual que tienes de actuar con las personas con quienes te relacionas. No existen respuestas buenas ni malas, sino respuestas sinceras que deben reflejar tu estilo, tu modo habitual de pensar, hacer y sentir. La manera de responder es la siguiente. De acuerdo a cada comportamiento que tengas, selecciona la casilla correspondiente.
+          </h5>
+        </div>
+        <form id="testForm" method="post">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-success text-center">
+                <tr>
+                  <th scope="col">Comportamiento</th>
+                  <th scope="col">Nunca</th>
+                  <th scope="col">Algunas veces</th>
+                  <th scope="col">Siempre</th>
+                </tr>
+              </thead>
+              <tbody class ="text-center" id="preguntasContainer">
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <input class="btn btn-success" type="submit" id="calcularSuma" value="Enviar">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+      <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 SICAVI</p>
+  
+      <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+      </a>
+      <img class="justify-content-end" style="width: 30%;"src="assets/img/sica.png" alt="SICAVI">
+    </footer>
+  </div>
+  <div class="modal fade" id="resultadosModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-body p-4 text-center">
+                <h4 class="mb-0"><strong>Resultado</strong></h4>
+                <br>
+                <p class="mb-0 justificado"><br>Se han registrado los datos</p>
+            </div>
+            <div class="modal-footer flex-nowrap p-0">
+                <button id="modal-accept" type="button" class="btn btn-success btn-lg btn-block w-100" data-bs-dismiss="modal" style="background-color: #006657;"><strong>ACEPTAR</strong></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <script src="assets/js/jquery-3.5.1.min.js"></script>
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    const preguntas = [
+      "Me conozco a mí mismo, sé lo que pienso, lo que siento y lo que hago",
+      "Soy capaz de auto motivarme para aprender, estudiar, aprobar, conseguir algo",
+      "Cuando las cosas me van mal, mi estado de ánimo aguanta hasta que las cosas vayan mejor",
+      "Llego a acuerdos razonables con otras personas cuando tenemos posturas enfrentadas",
+      "Sé qué cosas me ponen alegre y qué cosas me ponen triste",
+      "Sé lo que es más importante en cada momento",
+      "Cuando hago las cosas bien me felicito a mí mismo",
+      "Cuando los demás me provocan intencionadamente soy capaz de no responder",
+      "Me fijo en el lado positivo de las cosas, soy optimista",
+      "Controlo mis pensamientos, pienso lo que de verdad me interesa",
+      "Hablo conmigo mismo, en voz baja claro",
+      "Cuando me piden que diga o haga algo que me parece inaceptable me niego a hacerlo",
+      "Cuando alguien me critica injustamente me defiendo adecuadamente con el diálogo",
+      "Cuando me critican por algo que es justo lo acepto porque tienen razón",
+      "Soy capaz de quitarme de la mente las preocupaciones que me obsesionan",
+      "Me doy cuenta de lo que dicen, piensan y sienten las personas más cercanas a mí (amigos, compañeros, familiares)",
+      "Valoro las cosas buenas que hago",
+      "Soy capaz de divertirme y pasármelo bien donde esté",
+      "Hay cosas que no me gusta hacer pero sé que hay que hacerlas y las hago",
+      "Soy capaz de sonreír",
+      "Tengo confianza en mí mismo, en lo que soy capaz de hacer, pensar y sentir",
+      "Soy una persona activa, me gusta hacer cosas",
+      "Comprendo los sentimientos de los demás",
+      "Mantengo conversaciones con la gente",
+      "Tengo buen sentido del humor",
+      "Aprendo de los errores que cometo",
+      "En momentos de tensión y ansiedad soy capaz de relajarme y tranquilizarme para no perder el control y actuar apresuradamente",
+      "Soy una persona realista, con los ofrecimientos que hago, sabiendo qué cosa puedo cumplir y qué no me será posible hacer",
+      "Cuando alguien se muestra muy nervioso/a o exaltado/a lo calmo y tranquilizo",
+      "Tengo las ideas muy claras sobre lo que quiero",
+      "Controlo bien mis miedos y temores",
+      "Si he de estar solo no me agobio por eso",
+      "Formo parte algún grupo o equipo de deporte o de ocio para compartir intereses o aficiones",
+      "Sé cuáles son mis defectos y cómo cambiarlos",
+      "Soy creativo, tengo ideas originales y las desarrollo",
+      "Sé qué pensamientos son capaces de hacerme sentir feliz, triste, enfadado, altruista, angustiado",
+      "Soy capaz de aguantar bien la frustración cuando no consigo lo que me propongo",
+      "Me comunico bien con la gente con la que me relaciono",
+      "Soy capaz de comprender el punto de vista de los demás",
+      "Identifico las emociones que expresa la gente a mi alrededor",
+      "Soy capaz de verme a mí mismo desde la perspectiva de los otros",
+      "Me responsabilizo de las cosas que hago",
+      "Me adapto a las nuevas situaciones, aunque me cuesten algún cambio en mi manera de sentir las cosas",
+      "Creo que soy una persona equilibrada emocionalmente",
+      "Tomo decisiones sin dudar ni titubear demasiado"
+    ];
+
+    const preguntasContainer = document.getElementById('preguntasContainer');
+    preguntas.forEach((pregunta, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${index + 1}. ${pregunta}</td>
+        <td><input type="radio" name="pregunta_${index}" value="0" required></td>
+        <td><input type="radio" name="pregunta_${index}" value="1" required></td>
+        <td><input type="radio" name="pregunta_${index}" value="2" required></td>
+      `;
+      preguntasContainer.appendChild(row);
+    });
+
+    $(document).ready(function () {
+            document.getElementById("testForm").reset();
+
+            $("#testForm").on("submit", function (e) {
+                e.preventDefault();
+
+                let total = 0;
+                document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                    total += parseInt(radio.value);
+                });
+
+                let descripcion = "";
+                if (total <= 20) {
+                    descripcion = "Es importante que conozcas más las emociones son las que vives y ponerlas en práctica, ya que son necesarias para que te sientas más a gusto contigo mismo y para que las relaciones con la gente sean satisfactorias.";
+                } else if (total <= 35) {
+                    descripcion = "Es importante saber qué emociones experimentas, cómo las controlas, cómo las expresas y como las identificas en los demás es fundamental para que te puedas sentir bien, y desarrollar toda tu personalidad de una manera eficaz.";
+                } else if (total <= 45) {
+                    descripcion = "Ya conoces muchas cosas de lo que piensas, haces y sientes y, posiblemente, de cómo manejar tus emociones y comunicarte con eficacia con los demás. ";
+                } else if (total <= 79) {
+                    descripcion = "Sabes quién eres, cómo te emocionas, cómo manejas tus sentimientos y cómo descubres todo esto en los demás. Tus relaciones con la gente las llevas bajo control, empleando para ello tus habilidades para saber cómo te sientes tú, cómo debes expresarlo y también conociendo cómo se sienten los demás, y qué debes hacer para mantener relaciones satisfactorias con otras personas.";
+                } else {
+                    descripcion = "Tus habilidades te permiten ser consciente de quién eres, qué objetivos pretendes, qué emociones vives, sabes valorarte como te mereces, manejas bien tus estados emocionales y, además, con más mérito todavía, eres capaz de comunicarte eficazmente con quienes te rodean, y también eres único/a para solucionar posconflictos interpersonales que cada día acontecen.";
+                }
+
+                $('#resultadosModal .modal-body p').html(descripcion);
+                
+                document.getElementById("testForm").reset();
+                $("#resultadosModal").modal("show");
+
+            });
+    });
+  </script>
+</body>
+</html>
